@@ -1,0 +1,16 @@
+{
+  "name": "mind-reader",
+  "version": "0.0.1",
+  "description": "My JS1k 2017 entry. A binary search number guessing game using Canvas and Web Audio",
+  "main": "index.js",
+  "scripts": {
+    "build": "./tasks/build.bash",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "James Wright <james@jamesswright.co.uk>",
+  "license": "ISC",
+  "devDependencies": {
+    "google-closure-compiler-js": "20170124.0.0",
+    "regpack": "4.0.1"
+  }
+}
