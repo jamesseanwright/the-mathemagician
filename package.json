@@ -1,5 +1,5 @@
 {
-  "name": "mind-reader",
+  "name": "marvin-the-magician",
   "version": "0.0.1",
   "description": "My JS1k 2017 entry. A binary search number guessing game using Canvas and Web Audio",
   "main": "index.js",
