@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
-function echo_byte_count {
+function echo_byte_length {
     local type=$1
-    local js=$2
-    local byte_length=$(echo $js | wc --bytes)
+    local byte_length=$2
 
     echo "$type output length: $byte_length byte(s)"
 }
@@ -16,7 +15,8 @@ minified=$(./node_modules/.bin/google-closure-compiler-js \
     --compilationLevel ADVANCED \
     src/index.js)
 
-echo_byte_count "Minified" $minified
+minified_byte_length=$(echo $minified | wc --bytes)
+echo_byte_length "Minified" $minified_byte_length
 
 # interestingly, invoking ./node_modules/.bin/regpack
 # results in ': No such file or directory'. I can't
@@ -24,9 +24,12 @@ echo_byte_count "Minified" $minified
 # it through Node.js
 echo "Crushing minified output with RegPack..."
 crushed=$(echo $minified | node ./node_modules/.bin/regpack -)
-echo_byte_count "Crushed" $crushed
+crushed_byte_length=$(echo $crushed | wc --bytes)
+echo_byte_length "Crushed" $crushed_byte_length
 
 echo "Injecting crushed script into index.html"
 sed "s/###DEMOTARGET###/$crushed/" src/index.html > dist.html
+
+./tasks/dump_size_data.bash $minified_byte_length $crushed_byte_length
 
 echo "Done!"
