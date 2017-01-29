@@ -11,6 +11,6 @@ data=$(sed "s/]//" $output_file)
 date="$(date +%s)000" # convert to MS for JavaScript
 
 data="
-$data,{\"date\":$date,\"minified\":$minified_byte_length,\"crushed\": $crushed_byte_length}]"
+$data,{\"date\":$date,\"minified\":$minified_byte_length,\"crushed\":$crushed_byte_length}]"
 
 echo $data > bundleSize.json
