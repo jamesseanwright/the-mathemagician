@@ -8,7 +8,7 @@ output_file=bundleSize.json
 data=$(sed "s/]//" $output_file)
 
 # Add new size data
-date="$(date +%s)000" # convert to MS for JavaScript
+date=$(date +%s)
 
 data="
 $data,{\"date\":$date,\"minified\":$minified_byte_length,\"crushed\":$crushed_byte_length}]"
