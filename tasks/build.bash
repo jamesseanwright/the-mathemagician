@@ -13,6 +13,8 @@ echo "Minifying with Closure Compiler..."
 
 minified=$(./node_modules/.bin/google-closure-compiler-js \
     --compilationLevel ADVANCED \
+    --languageIn ECMASCRIPT5 \
+    --languageOut ECMASCRIPT5 \
     src/index.js)
 
 minified_byte_length=$(echo $minified | wc --bytes)
@@ -27,8 +29,10 @@ crushed=$(echo $minified | node ./node_modules/.bin/regpack -)
 crushed_byte_length=$(echo $crushed | wc --bytes)
 echo_byte_length "Crushed" $crushed_byte_length
 
+echo $minified
+
 echo "Injecting crushed script into index.html"
-sed "s/###DEMOTARGET###/$crushed/" src/index.html > dist.html
+sed -e "s#DEMOTARGET#$crushed#" src/index.html > dist.html
 
 ./tasks/dump_size_data.bash $minified_byte_length $crushed_byte_length
 
