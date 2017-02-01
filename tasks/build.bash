@@ -29,8 +29,6 @@ crushed=$(echo $minified | node ./node_modules/.bin/regpack -)
 crushed_byte_length=$(echo $crushed | wc --bytes)
 echo_byte_length "Crushed" $crushed_byte_length
 
-echo $minified
-
 echo "Injecting crushed script into index.html"
 sed -e "s#DEMOTARGET#$crushed#" src/index.html > dist.html
 
