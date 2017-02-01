@@ -8,7 +8,8 @@ var guess;
 var isHigher;
 
 while (guessesCount) {
+    guess = Math.round(min + Math.random() * (max - min));
     isHigher = Math.round(Math.random());
-    alert('Foo');
+    alert('Is your number ' + (isHigher ? 'higher' : 'lower') + ' than ' + guess + '?');
     guessesCount--;
 }
