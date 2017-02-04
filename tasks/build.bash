@@ -34,7 +34,7 @@ echo_byte_length "Crushed" $crushed_byte_length
 crushed=$(printf %q "$crushed")
 
 echo "Injecting crushed script into index.html"
-sed "126i $crushed" src/index.html > dist.html
+sed "126i $minified" src/index.html > dist.html
 
 ./tasks/dump_size_data.bash $minified_byte_length $crushed_byte_length
 
