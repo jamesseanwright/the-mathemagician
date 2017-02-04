@@ -15,6 +15,7 @@ minified=$(./node_modules/.bin/google-closure-compiler-js \
     --compilationLevel ADVANCED \
     --languageIn ECMASCRIPT5 \
     --languageOut ECMASCRIPT5 \
+    --externs "externs.js" \
     src/index.js)
 
 minified_byte_length=$(echo $minified | wc --bytes)
