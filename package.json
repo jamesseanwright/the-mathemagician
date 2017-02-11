@@ -11,6 +11,6 @@
   "license": "ISC",
   "devDependencies": {
     "google-closure-compiler-js": "20170124.0.0",
-    "regpack": "4.0.1"
+    "regpack": "5.0.0"
   }
 }

@@ -13,6 +13,8 @@ var guess;
 var isHigher;
 var isGuessCorrect;
 
+window['marvin'] = marvin;
+
 function loop() {
     marvin.render();
 
