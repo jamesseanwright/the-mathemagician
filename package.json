@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "./tasks/build.bash",
+    "dev": "./tasks/build_dev.bash",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "James Wright <james@jamesswright.co.uk>",

@@ -16,6 +16,7 @@ var isGuessCorrect;
 window['marvin'] = marvin;
 
 function loop() {
+    c.clearRect(0, 0, width, height);
     marvin.render();
 
     requestAnimationFrame(loop);
@@ -25,19 +26,36 @@ loop();
 
 function Marvin() {
     this.x = 100;
-    this.y = 100;
+    this.y = 300;
     this.headRadius = 75;
-    this.eyeY = 75;
+    this.headTop = this.y - this.headRadius / 2;
+
     this.eyeWidth = 5;
     this.eyeHeight = 15;
     this.eyeXOffset = 25;
-    this.skinGradient = context.createRadialGradient(100, 100, 75, 100, 100, 60);
+    this.eyeYOffset = -20;
+
+    this.hatXOffset = 15;
+    this.hatBaseWidth = this.headRadius - this.hatXOffset;
+    this.hatHeight = 50;
+
+    this.skinGradient = context.createRadialGradient(this.x, this.y, 75, this.x, this.y, 60);
 
     this.skinGradient.addColorStop(0, '#eac086');
     this.skinGradient.addColorStop(1, '#ffe0bd');
 }
 
 Marvin.prototype.render = function render() {
+    var headTop = this.y / 2;
+
+    context.fillStyle = 'blue';
+    context.beginPath();
+    context.moveTo(this.x + this.hatXOffset, this.headTop);
+    context.lineTo(this.x + this.hatXOffset + this.hatBaseWidth / 2, this.headTop- this.hatHeight);
+    context.moveTo(this.x + this.hatXOffset + this.hatBaseWidth, this.headTop);
+    context.closePath();
+    context.fill();
+
     context.fillStyle = this.skinGradient;
     context.beginPath();
     context.ellipse(this.x, this.y, this.headRadius, this.headRadius, 0, 0, Math.PI * 2);
@@ -45,11 +63,11 @@ Marvin.prototype.render = function render() {
 
     context.fillStyle = '#000';
     context.beginPath();
-    context.ellipse(this.x - this.eyeXOffset, this.eyeY, this.eyeWidth, this.eyeHeight, 0, 0, Math.PI * 2);
+    context.ellipse(this.x - this.eyeXOffset, this.y + this.eyeYOffset, this.eyeWidth, this.eyeHeight, 0, 0, Math.PI * 2);
     context.fill();
 
     context.beginPath();
-    context.ellipse(this.x + this.eyeXOffset, this.eyeY, this.eyeWidth, this.eyeHeight, 0, 0, Math.PI * 2);
+    context.ellipse(this.x + this.eyeXOffset, this.y + this.eyeYOffset, this.eyeWidth, this.eyeHeight, 0, 0, Math.PI * 2);
     context.fill();
 };
 

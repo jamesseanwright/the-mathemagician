@@ -31,10 +31,16 @@ crushed_byte_length=$(echo $crushed | wc --bytes)
 echo_byte_length "Crushed" $crushed_byte_length
 
 # Escaping characters for sed
-crushed=$(printf %q "$crushed")
+# It seems that printf, or at
+# least Ubuntu's variant, doesn't
+# support Unicode characters, so
+# time for a hacky approach with
+# sed
+echo -e "\nWARNING! Using minified script, NOT crushed!\n"
+crushed=$(echo $minified | sed 's/\([\(\)\{\}\ \.\,]\)/\\\1/g')
 
 echo "Injecting crushed script into index.html"
-sed "126i $crushed" src/index.html > dist.html
+sed "126i$crushed" src/index.html > dist.html
 
 ./tasks/dump_size_data.bash $minified_byte_length $crushed_byte_length
 
