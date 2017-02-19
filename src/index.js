@@ -15,15 +15,6 @@ var isGuessCorrect;
 
 window['marvin'] = marvin;
 
-function loop() {
-    c.clearRect(0, 0, width, height);
-    marvin.render();
-
-    requestAnimationFrame(loop);
-}
-
-loop();
-
 function Marvin() {
     this.x = 100;
     this.y = 300;
@@ -54,13 +45,13 @@ Marvin.prototype.render = function render() {
     // context.closePath();
     // context.fill();
 
-    this.leftEye.render();
-    this.rightEye.render();
-
     context.fillStyle = this.skinGradient;
     context.beginPath();
     context.ellipse(this.x, this.y, this.headRadius, this.headRadius, 0, 0, Math.PI * 2);
     context.fill();
+
+    this.leftEye.render();
+    this.rightEye.render();
 };
 
 function Eye(parent, width, height, xOffset, yOffset) {
@@ -74,9 +65,18 @@ function Eye(parent, width, height, xOffset, yOffset) {
 Eye.prototype.render = function render() {
     context.fillStyle = '#000';
     context.beginPath();
-    context.ellipse(this.parent.x - this.eyeXOffset, this.parent.y + this.eyeYOffset, this.eyeWidth, this.eyeHeight, 0, 0, Math.PI * 2);
+    context.ellipse(this.parent.x - this.xOffset, this.parent.y + this.yOffset, this.width, this.height, 0, 0, Math.PI * 2);
     context.fill();
 };
+
+function loop() {
+    c.clearRect(0, 0, width, height);
+    marvin.render();
+
+    requestAnimationFrame(loop);
+}
+
+loop();
 
 function foo() {
     while (guessesCount && min !== max) {
