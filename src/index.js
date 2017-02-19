@@ -13,8 +13,6 @@ var guess;
 var isHigher;
 var isGuessCorrect;
 
-window['marvin'] = marvin;
-
 function Marvin() {
     this.x = width / 2;
     this.y = 300;
@@ -88,12 +86,58 @@ Hat.prototype.getBaseY = function getBaseY() {
     return this.parent.y - this.parent.headRadius / 2;
 };
 
+function Star(x, y) {
+    this.x = x;
+    this.y = y;
+    this.fill = 'rgba(' + [
+        Star.getRandomByte(),
+        Star.getRandomByte(),
+        Star.getRandomByte(),
+    ].join(',') + ',255)';
+}
+
+Star.SPEED = 5;
+Star.RADIUS = 3;
+Star.POINTS_COUNT = 5;
+Star.PADDING = 10;
+
+Star.getRandomByte = function getRandomByte() {
+    return Math.ceil(Math.random() * 255);
+};
+
+Star.createInstances = function createInstances() {
+    Star.instances = [];
+
+    for (var x = 0; x < width; x += Star.RADIUS + Star.PADDING) {
+        for (var y = 0; y < width; y += Star.RADIUS + Star.PADDING) {
+            Star.instances.push(new Star(x, y));
+        }
+    }
+};
+
+Star.render = function render() {
+    for (var i = 0; i < Star.instances.length; i++) {
+        Star.instances[i].render();
+    }
+};
+
+Star.prototype.render = function render() {
+    context.fillStyle = this.fill;
+    context.beginPath();
+    context.ellipse(this.x, this.y, Star.RADIUS, Star.RADIUS, 0, 0, Math.PI * 2);
+    context.fill();
+};
+
+window['star'] = Star;
+Star.createInstances();
+
 function loop() {
     c.clearRect(0, 0, width, height);
 
     c.fillStyle = 'orange';
     c.fillRect(0, 0, width, height);
 
+    Star.render();
     marvin.render();
 
     requestAnimationFrame(loop);
