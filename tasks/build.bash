@@ -37,7 +37,7 @@ echo_byte_length "Crushed" $crushed_byte_length
 # time for a hacky approach with
 # sed
 echo -e "\nWARNING! Using minified script, NOT crushed!\n"
-crushed=$(echo $minified | sed 's/\([\(\)\{\}\ \.\,]\)/\\\1/g')
+crushed=$(echo $minified | sed 's/\([][\(\)\{\}\ \.\,]\)/\\\1/g')
 
 echo "Injecting crushed script into index.html"
 sed "126i$crushed" src/index.html > dist.html

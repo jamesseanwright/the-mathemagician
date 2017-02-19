@@ -16,40 +16,26 @@ var isGuessCorrect;
 window['marvin'] = marvin;
 
 function Marvin() {
-    this.x = 100;
+    this.x = width / 2;
     this.y = 300;
     this.headRadius = 75;
-    this.headTop = this.y - this.headRadius / 2;
 
     this.leftEye = new Eye(this, 5, 15, -25, -20);
     this.rightEye = new Eye(this, 5, 15, 25, -20);
-
-    this.hatXOffset = 15;
-    this.hatBaseWidth = this.headRadius - this.hatXOffset;
-    this.hatHeight = 50;
+    this.hat = new Hat(this, -69, 139);
 
     this.skinGradient = context.createRadialGradient(this.x, this.y, 75, this.x, this.y, 60);
-
     this.skinGradient.addColorStop(0, '#eac086');
     this.skinGradient.addColorStop(1, '#ffe0bd');
 }
 
 Marvin.prototype.render = function render() {
-    var headTop = this.y / 2;
-
-    // context.fillStyle = 'blue';
-    // context.beginPath();
-    // context.moveTo(this.x + this.hatXOffset, this.headTop);
-    // context.lineTo(this.x + this.hatXOffset + this.hatBaseWidth / 2, this.headTop- this.hatHeight);
-    // context.moveTo(this.x + this.hatXOffset + this.hatBaseWidth, this.headTop);
-    // context.closePath();
-    // context.fill();
-
     context.fillStyle = this.skinGradient;
     context.beginPath();
     context.ellipse(this.x, this.y, this.headRadius, this.headRadius, 0, 0, Math.PI * 2);
     context.fill();
 
+    this.hat.render();
     this.leftEye.render();
     this.rightEye.render();
 };
@@ -69,8 +55,45 @@ Eye.prototype.render = function render() {
     context.fill();
 };
 
+function Hat(parent, xOffset, height) {
+    this.parent = parent;
+    this.xOffset = xOffset;
+    this.baseWidth = this.parent.headRadius - this.xOffset;
+    this.height = height;
+
+    this.gradient = context.createLinearGradient(
+        this.parent.x,
+        this.getBaseY() - this.height,
+        this.baseWidth,
+        this.height
+    );
+
+    this.gradient.addColorStop(0, '#60AFFE');
+    this.gradient.addColorStop(0.5, '#104E8B');
+}
+
+Hat.prototype.render = function render() {
+    var baseY = this.getBaseY();
+
+    context.fillStyle = this.gradient;
+    context.beginPath();
+    context.moveTo(this.parent.x + this.xOffset, baseY);
+    context.lineTo(this.parent.x + this.xOffset + this.baseWidth / 2, baseY - this.height);
+    context.lineTo(this.parent.x + this.xOffset + this.baseWidth, baseY);
+    context.lineTo(this.parent.x + this.xOffset, baseY);
+    context.fill();
+};
+
+Hat.prototype.getBaseY = function getBaseY() {
+    return this.parent.y - this.parent.headRadius / 2;
+};
+
 function loop() {
     c.clearRect(0, 0, width, height);
+
+    c.fillStyle = 'orange';
+    c.fillRect(0, 0, width, height);
+
     marvin.render();
 
     requestAnimationFrame(loop);
