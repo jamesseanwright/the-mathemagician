@@ -136,15 +136,13 @@ Background.prototype.render = function render() {
 
 background = Background.create();
 
-function loop() {
+requestAnimationFrame(function loop() {
     context.clearRect(0, 0, width, height);
     context.putImageData(background, 0, 0);
 
     marvin.render();
     requestAnimationFrame(loop);
-}
-
-loop();
+});
 
 function foo() {
     while (guessesCount && min !== max) {
