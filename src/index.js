@@ -126,48 +126,48 @@ Hat.prototype.getBaseY = function getBaseY() {
     return this.parent.y - this.parent.headRadius / 2;
 };
 
-function Background(x, y) {
+function BackgroundElement(x, y) {
     this.x = x;
     this.y = y;
     this.fill = 'rgba(' + [
-        Background.getRandomByte(),
-        Background.getRandomByte(),
-        Background.getRandomByte(),
+        BackgroundElement.getRandomByte(),
+        BackgroundElement.getRandomByte(),
+        BackgroundElement.getRandomByte(),
     ].join(',') + ',0.5)';
 }
 
-Background.RADIUS = 25;
-Background.PADDING = 10;
+BackgroundElement.SIZE = 25;
+BackgroundElement.PADDING = 10;
 
-Background.getRandomByte = function getRandomByte() {
+BackgroundElement.getRandomByte = function getRandomByte() {
     return Math.ceil(Math.random() * 255);
 };
 
-Background.createElements = function createElements() {
-    var elements = [];
+BackgroundElement.prototype.render = function render() {
+    context.fillStyle = this.fill;
+    context.fillRect(this.x, this.y, BackgroundElement.SIZE, BackgroundElement.SIZE);
+};
 
-    for (var x = 0; x < width; x += Background.RADIUS + Background.PADDING) {
-        for (var y = 0; y < width; y += Background.RADIUS + Background.PADDING) {
-            elements.push(new Background(x, y));
+var Background = {
+    elements: []
+};
+
+Background.createElements = function createElements() {
+    for (var x = 0; x < width; x += BackgroundElement.SIZE + BackgroundElement.PADDING) {
+        for (var y = 0; y < width; y += BackgroundElement.SIZE + BackgroundElement.PADDING) {
+            Background.elements.push(new BackgroundElement(x, y));
         }
     }
-
-    return elements;
 };
 
 Background.create = function render() {
-    var elements = Background.createElements();
+    Background.createElements();
 
-    for (var i = 0; i < elements.length; i++) {
-        elements[i].render();
+    for (var i = 0; i < Background.elements.length; i++) {
+        Background.elements[i].render();
     }
 
     return context.getImageData(0, 0, width, height);
-};
-
-Background.prototype.render = function render() {
-    context.fillStyle = this.fill;
-    context.fillRect(this.x, this.y, Background.RADIUS, Background.RADIUS);
 };
 
 background = Background.create();
