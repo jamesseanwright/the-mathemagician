@@ -5,7 +5,7 @@ var context = c;
 var width = a.width;
 var height = a.height;
 
-var marvin = new Marvin();
+var marvin = new Marvin(width / 2, 200);
 var background;
 
 var min = MIN_GUESS;
@@ -17,29 +17,65 @@ var isGuessCorrect;
 
 a.style.background = 'black';
 
-function Marvin() {
-    this.x = width / 2;
-    this.y = 300;
-    this.headRadius = 75;
+function BounceAnimation(entity, startY, endY, speed) {
+    this.entity = entity;
+    this.startY = startY;
+    this.endY = endY;
+    this.speed = speed;
+    this.direction = 1;
+}
 
-    this.leftEye = new Eye(this, 5, 15, -25, -20);
-    this.rightEye = new Eye(this, 5, 15, 25, -20);
-    this.hat = new Hat(this, -69, 139);
+BounceAnimation.UP = -1;
+BounceAnimation.DOWN = 1;
 
-    this.skinGradient = context.createRadialGradient(this.x, this.y, 75, this.x, this.y, 60);
-    this.skinGradient.addColorStop(0, '#eac086');
-    this.skinGradient.addColorStop(1, '#ffe0bd');
+BounceAnimation.prototype.updateDirection = function updateDirection() {
+    if (Math.ceil(this.entity.y) + this.entity.headRadius > this.endY && this.direction === BounceAnimation.DOWN) {
+        this.direction = BounceAnimation.UP;
+    }
+
+    if (Math.floor(this.entity.y) <= this.startY && this.direction === BounceAnimation.UP) {
+        this.direction = BounceAnimation.DOWN;
+    }
+};
+
+BounceAnimation.prototype.update = function update() {
+    var progress;
+
+    this.updateDirection();
+    progress = (this.entity.y || 1) / this.endY;
+    this.entity.y += (this.speed * this.direction) * Math.sin(Math.PI * progress);
+};
+
+function Marvin(x, y) {
+    this.x = x
+    this.y = y;
+    this.headRadius = 45;
+
+    this.leftEye = new Eye(this, 5, 15, -25, 0);
+    this.rightEye = new Eye(this, 5, 15, 25, 0);
+    this.hat = new Hat(this, 70);
+    this.bounceAnimation = new BounceAnimation(this, height / 4, height / 2, 2, BounceAnimation.DOWN);
 }
 
 Marvin.prototype.render = function render() {
-    context.fillStyle = this.skinGradient;
+    context.fillStyle = this.createSkinGradient();
     context.beginPath();
     context.ellipse(this.x, this.y, this.headRadius, this.headRadius, 0, 0, Math.PI * 2);
     context.fill();
 
+    this.bounceAnimation.update();
     this.hat.render();
     this.leftEye.render();
     this.rightEye.render();
+};
+
+Marvin.prototype.createSkinGradient = function createSkinGradient() {
+    var gradient = context.createRadialGradient(this.x, this.y, this.headRadius, this.x, this.y, this.headRadius - 15);
+
+    gradient.addColorStop(0, '#ffad60');
+    gradient.addColorStop(1, '#ffe0bd');
+
+    return gradient;
 };
 
 function Eye(parent, width, height, xOffset, yOffset) {
@@ -57,14 +93,14 @@ Eye.prototype.render = function render() {
     context.fill();
 };
 
-function Hat(parent, xOffset, height) {
+function Hat(parent, height) {
     this.parent = parent;
-    this.xOffset = xOffset;
-    this.baseWidth = this.parent.headRadius - this.xOffset;
+    this.x = parent.x - this.parent.headRadius;
+    this.baseWidth = this.parent.headRadius * 2;
     this.height = height;
 
     this.gradient = context.createLinearGradient(
-        this.parent.x,
+        this.x,
         this.getBaseY() - this.height,
         this.baseWidth,
         this.height
@@ -79,10 +115,10 @@ Hat.prototype.render = function render() {
 
     context.fillStyle = this.gradient;
     context.beginPath();
-    context.moveTo(this.parent.x + this.xOffset, baseY);
-    context.lineTo(this.parent.x + this.xOffset + this.baseWidth / 2, baseY - this.height);
-    context.lineTo(this.parent.x + this.xOffset + this.baseWidth, baseY);
-    context.lineTo(this.parent.x + this.xOffset, baseY);
+    context.moveTo(this.x, baseY);
+    context.lineTo(this.x + this.baseWidth / 2, baseY - this.height);
+    context.lineTo(this.x + this.baseWidth, baseY);
+    context.lineTo(this.x, baseY);
     context.fill();
 };
 
