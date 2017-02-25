@@ -1,12 +1,16 @@
+'use strict';
+
 var MIN_GUESS = 1;
 var MAX_GUESS = 100;
 
+var audioContext = new AudioContext();
 var context = c;
 var width = a.width;
 var height = a.height;
 
 var marvin = new Marvin(width / 2, 200);
 var background;
+var music;
 
 var min = MIN_GUESS;
 var max = MAX_GUESS;
@@ -190,6 +194,128 @@ background.update = function update() {
 };
 
 background.create();
+
+music = {
+    snareBuffer: null,
+
+    kickSequence: [
+        0,
+        2,
+        4,
+        6
+    ],
+
+    snareSequence: [
+        1,
+        3,
+        5,
+        7
+    ],
+
+    bassSequence: [
+        [65.41, 0],
+        [73.42, 0.5],
+        [77.78, 1],
+        [87.31, 1.5],
+        [98.00, 2],
+        [103.83, 2.5],
+        [98.00, 3],
+        [87.31, 3.5],
+        [77.7, 4],
+        [73.42, 4.5],
+        [65.41, 5],
+        [65.41, 5.5],
+        [65.41, 6],
+        [65.41, 6.5],
+        [65.41, 7],
+        [65.41, 7.5]
+    ],
+
+    getSnareBuffer: function getSnareBuffer() {
+        if (this.snareBuffer) {
+            return this.snareBuffer;
+        }
+
+        var buffer = audioContext.createBuffer(1, audioContext.sampleRate, audioContext.sampleRate);
+	    var output = buffer.getChannelData(0);
+
+        for (var i = 0; i < audioContext.sampleRate; i++) {
+            output[i] = Math.random() * 2 - 1;
+        }
+
+        this.snareBuffer = buffer;
+
+        return this.snareBuffer;
+    },
+
+    kick: function kick(startTime) {
+		var time = audioContext.currentTime + startTime;
+        var endTime = time + 0.2;
+		var oscillator = audioContext.createOscillator();
+		var gainNode = audioContext.createGain();
+
+		oscillator.type = 'triangle';
+		oscillator.frequency.value = 18;
+		gainNode.gain.setValueAtTime(7, time);
+		gainNode.gain.exponentialRampToValueAtTime(0.001, endTime);
+
+		oscillator.connect(gainNode);
+		gainNode.connect(audioContext.destination);
+        oscillator.start(time);
+        oscillator.stop(endTime);
+    },
+
+    snare: function snare(startTime) {
+		var time = audioContext.currentTime + startTime;
+        var endTime = time + 0.03;
+        var source  = audioContext.createBufferSource();
+		var gainNode = audioContext.createGain();
+        var noiseFilter = audioContext.createBiquadFilter();
+
+        source.buffer = this.getSnareBuffer();
+
+        noiseFilter.type = 'highpass';
+        noiseFilter.frequency.value = 1000;
+
+        gainNode.gain.value = 0.2;
+
+        source.connect(noiseFilter);
+        noiseFilter.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        source.start(time);
+        source.stop(endTime);
+    },
+
+    bass: function bass(sequenceItem) {
+        var frequency = sequenceItem[0];
+        var startTime = sequenceItem[1];
+		var time = audioContext.currentTime + startTime;
+        var endTime = time + 0.5;
+		var oscillator = audioContext.createOscillator();
+		var gainNode = audioContext.createGain();
+
+		oscillator.type = 'triangle';
+		oscillator.frequency.value = frequency;
+		gainNode.gain.setValueAtTime(0.5, time);
+		gainNode.gain.exponentialRampToValueAtTime(0.001, endTime);
+
+		oscillator.connect(gainNode);
+		gainNode.connect(audioContext.destination);
+		oscillator.start(time);
+        oscillator.stop(endTime);
+	},
+
+    play: function play() {
+        this.kickSequence.forEach(this.kick.bind(this));
+        this.snareSequence.forEach(this.snare.bind(this));
+        this.bassSequence.forEach(this.bass.bind(this));
+
+        setTimeout(this.play.bind(this), 8000);
+    }
+};
+
+music.play();
 
 requestAnimationFrame(function loop() {
     context.clearRect(0, 0, width, height);
