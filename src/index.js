@@ -148,33 +148,52 @@ BackgroundElement.prototype.render = function render() {
     context.fillRect(this.x, this.y, BackgroundElement.SIZE, BackgroundElement.SIZE);
 };
 
-var Background = {
-    elements: []
+background = {
+    SPEED: 0.5,
+    repetitions: [0, width],
+    imageData: null
 };
 
-Background.createElements = function createElements() {
-    for (var x = 0; x < width; x += BackgroundElement.SIZE + BackgroundElement.PADDING) {
-        for (var y = 0; y < width; y += BackgroundElement.SIZE + BackgroundElement.PADDING) {
-            Background.elements.push(new BackgroundElement(x, y));
+background.createElements = function createElements() {
+    var elements = [];
+    var totalElementSize = BackgroundElement.SIZE + BackgroundElement.PADDING;
+
+    for (var x = 0; x + totalElementSize < width; x += totalElementSize) {
+        for (var y = 0; y < height; y += totalElementSize) {
+            elements.push(new BackgroundElement(x, y));
         }
     }
+
+    return elements;
 };
 
-Background.create = function render() {
-    Background.createElements();
+background.create = function create() {
+    var elements = background.createElements();
 
-    for (var i = 0; i < Background.elements.length; i++) {
-        Background.elements[i].render();
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].render();
     }
 
-    return context.getImageData(0, 0, width, height);
+    this.imageData = context.getImageData(0, 0, width, height);
 };
 
-background = Background.create();
+background.update = function update() {
+    for (var i = 0; i < background.repetitions.length; i++) {
+        background.repetitions[i] -= background.SPEED;
+
+        if (background.repetitions[i] + width < 0) {
+            background.repetitions[i] = width;
+        }
+
+        context.putImageData(background.imageData, background.repetitions[i], 0);
+    }
+};
+
+background.create();
 
 requestAnimationFrame(function loop() {
     context.clearRect(0, 0, width, height);
-    context.putImageData(background, 0, 0);
+    background.update();
 
     marvin.render();
     requestAnimationFrame(loop);
