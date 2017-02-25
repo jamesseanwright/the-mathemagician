@@ -42,7 +42,7 @@ BounceAnimation.prototype.update = function update() {
     var progress;
 
     this.updateDirection();
-    progress = (this.entity.y || 1) / this.endY;
+    progress = this.startY / (this.entity.y || 1);
     this.entity.y += (this.speed * this.direction) * Math.sin(Math.PI * progress);
 };
 
@@ -54,7 +54,7 @@ function Marvin(x, y) {
     this.leftEye = new Eye(this, 5, 15, -25, 0);
     this.rightEye = new Eye(this, 5, 15, 25, 0);
     this.hat = new Hat(this, 70);
-    this.bounceAnimation = new BounceAnimation(this, height / 4, height / 2, 2, BounceAnimation.DOWN);
+    this.bounceAnimation = new BounceAnimation(this, height / 4, height / 2, 3, BounceAnimation.DOWN);
 }
 
 Marvin.prototype.render = function render() {
