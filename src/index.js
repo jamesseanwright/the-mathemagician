@@ -1,13 +1,11 @@
 'use strict';
 
-var MAX_NUMBER = 100000;
-
 var audioContext = new AudioContext();
 var context = c;
 var width = a.width;
 var height = a.height;
 
-var marvin = new Marvin(width / 2, 200);
+var mathmagician;
 var background;
 var music;
 
@@ -42,8 +40,67 @@ BounceAnimation.prototype.update = function update() {
     this.entity.y += (this.speed * this.direction) * Math.sin(Math.PI * progress);
 };
 
-function Marvin(x, y) {
-    this.x = x
+function SpinScaleFadeAnimation(entity) {
+    this.entity = entity;
+    this.entity.opacity = 1;
+}
+
+SpinScaleFadeAnimation.DURATION_MS = 3000;
+
+SpinScaleFadeAnimation.prototype.update = function update(time) {
+    var progress = time / SpinScaleFadeAnimation.DURATION_MS;
+    var rotation = Math.PI * 0.2 - progress;
+    var scale = 1 + progress;
+
+    this.entity.opacity = 1 - progress;
+
+    context.rotate(rotation);
+    context.scale(scale, scale);
+};
+
+function Multiplication(x, y) {
+    this.x = x;
+    this.y = y;
+
+    this.leftOperand = Multiplication.getOperand();
+    this.rightOperand = Multiplication.getOperand();
+    this.result = this.leftOperand * this.rightOperand;
+
+    this.animation = new SpinScaleFadeAnimation(this);
+}
+
+Multiplication.MAX_OPERAND = 50000;
+Multiplication.GENERATION_FREQUENCY_MS = 4000;
+Multiplication.FONT = 'bold 26px Arial';
+
+Multiplication.lastGenTime = Multiplication.GENERATION_FREQUENCY_MS;
+Multiplication.instance = new Multiplication(250, 100);
+
+Multiplication.getOperand = function getOperand() {
+    return Math.round(Math.random() * Multiplication.MAX_OPERAND);
+};
+
+Multiplication.update = function update(time) {
+    var shouldGenerate = Multiplication.lastGenTime < time - Multiplication.GENERATION_FREQUENCY_MS;
+
+    if (shouldGenerate) {
+        Multiplication.instance = new Multiplication(250, 100);
+        Multiplication.lastGenTime = time;
+    }
+
+    Multiplication.instance.render(time - Multiplication.lastGenTime);
+};
+
+Multiplication.prototype.render = function render(time) {
+    this.animation.update(time);
+    context.fillStyle = 'rgba(255, 255, 255, ' + this.opacity + ')';
+    context.font = Multiplication.FONT;
+    context.fillText(this.leftOperand + ' x ' + this.rightOperand + ' = ' + this.result, this.x, this.y);
+    context['resetTransform'](); // It seems Closure Compiler isn't aware of this relatively new API
+};
+
+function Mathmagician(x, y) {
+    this.x = x;
     this.y = y;
     this.headRadius = 45;
 
@@ -53,7 +110,7 @@ function Marvin(x, y) {
     this.bounceAnimation = new BounceAnimation(this, height / 4, height / 2, 3, BounceAnimation.DOWN);
 }
 
-Marvin.prototype.render = function render() {
+Mathmagician.prototype.render = function render() {
     context.fillStyle = this.createSkinGradient();
     context.beginPath();
     context.ellipse(this.x, this.y, this.headRadius, this.headRadius, 0, 0, Math.PI * 2);
@@ -65,7 +122,7 @@ Marvin.prototype.render = function render() {
     this.rightEye.render();
 };
 
-Marvin.prototype.createSkinGradient = function createSkinGradient() {
+Mathmagician.prototype.createSkinGradient = function createSkinGradient() {
     var gradient = context.createRadialGradient(this.x, this.y, this.headRadius, this.x, this.y, this.headRadius - 15);
 
     gradient.addColorStop(0, '#ffad60');
@@ -312,30 +369,13 @@ music = {
 
 music.play();
 
-requestAnimationFrame(function loop() {
+mathmagician = new Mathmagician(width / 2, 200);
+
+requestAnimationFrame(function loop(time) {
     context.clearRect(0, 0, width, height);
     background.update();
+    mathmagician.render();
+    Multiplication.update(time);
 
-    marvin.render();
     requestAnimationFrame(loop);
 });
-
-function foo() {
-    while (guessesCount && min !== max) {
-        guess = Math.round(min + Math.random() * (max - min));
-        isHigher = Math.round(Math.random());
-        isGuessCorrect = confirm('Is your number ' + (isHigher ? 'higher' : 'lower') + ' than ' + guess + '?');
-        updateRange();
-        guessesCount--;
-    }
-
-    function updateRange() {
-        if (isGuessCorrect) {
-            min = isHigher ? guess + 1 : min;
-            max = !isHigher ? guess - 1 : max;
-        } else {
-            min = !isHigher ? guess : min;
-            max = isHigher ? guess : max;
-        }
-    }
-}
