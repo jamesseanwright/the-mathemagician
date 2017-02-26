@@ -1,5 +1,3 @@
-var audioContext = new AudioContext();
-
 var mathMagicianX = 512;
 var mathMagicianY = 200;
 var bounceDirection = 1;
@@ -25,46 +23,48 @@ for (var x = 0; x + 35 < 1024; x += 35) {
 bgImageData = c.getImageData(0, 0, 1024, 720);
 a.style.background = '#000';
 
-var snareBuffer = audioContext.createBuffer(1, audioContext.sampleRate, audioContext.sampleRate);
+with (new AudioContext()) {
+    var snareBuffer = createBuffer(1, sampleRate, sampleRate);
 
-for (var i = 0; i < audioContext.sampleRate; i++) {
-    snareBuffer.getChannelData(0)[i] = Math.random() * 2 - 1;
+    for (var i = 0; i < sampleRate; i++) {
+        snareBuffer.getChannelData(0)[i] = Math.random() * 2 - 1;
+    }
+
+    // enqueue, play, and loop freqs
+    (function audioLoop() {
+        var time = currentTime;
+        var endTime = time + 0.2;
+        var oscillator = createOscillator();
+        var kickGain = createGain();
+
+        oscillator.type = 'triangle';
+        oscillator.frequency.value = 18;
+        kickGain.gain.setValueAtTime(7, time);
+        kickGain.gain.exponentialRampToValueAtTime(0.001, endTime);
+
+        oscillator.connect(kickGain);
+        kickGain.connect(destination);
+        oscillator.start(time);
+        oscillator.stop(endTime);
+
+        time += 1;
+        endTime = time + 0.03;
+        var snareSource = createBufferSource();
+        var snareGain = createGain();
+
+        snareSource.buffer = snareBuffer;
+
+        snareGain.gain.value = 0.2;
+
+        snareSource.connect(snareGain);
+        snareGain.connect(destination);
+
+        snareSource.start(time);
+        snareSource.stop(endTime);
+
+        setTimeout(audioLoop, 2000);
+    }());
 }
-
-// enqueue, play, and loop freqs
-(function audioLoop() {
-    var time = audioContext.currentTime;
-    var endTime = time + 0.2;
-    var oscillator = audioContext.createOscillator();
-    var kickGain = audioContext.createGain();
-
-    oscillator.type = 'triangle';
-    oscillator.frequency.value = 18;
-    kickGain.gain.setValueAtTime(7, time);
-    kickGain.gain.exponentialRampToValueAtTime(0.001, endTime);
-
-    oscillator.connect(kickGain);
-    kickGain.connect(audioContext.destination);
-    oscillator.start(time);
-    oscillator.stop(endTime);
-
-    time += 1;
-    endTime = time + 0.03;
-    var snareSource = audioContext.createBufferSource();
-    var snareGain = audioContext.createGain();
-
-    snareSource.buffer = snareBuffer;
-
-    snareGain.gain.value = 0.2;
-
-    snareSource.connect(snareGain);
-    snareGain.connect(audioContext.destination);
-
-    snareSource.start(time);
-    snareSource.stop(endTime);
-
-    setTimeout(audioLoop, 2000);
-}());
 
 requestAnimationFrame(function loop(time) {
     c.clearRect(0, 0, 1024, 720);
