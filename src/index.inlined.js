@@ -1,5 +1,4 @@
 var audioContext = new AudioContext();
-var context = c;
 var width = a.width;
 var height = a.height;
 
@@ -35,10 +34,10 @@ for (var x = 0; x + 35 < width; x += 35) {
 
 // render background
 for (var i = 0; i < backgroundElements.length; i++) {
-    context.fillStyle = backgroundElements[i].fill;
-    context.font = '25px monospace';
+    c.fillStyle = backgroundElements[i].fill;
+    c.font = '25px monospace';
 
-    context.fillText(
+    c.fillText(
         backgroundElements[i].number,
         backgroundElements[i].x,
         backgroundElements[i].y,
@@ -46,7 +45,7 @@ for (var i = 0; i < backgroundElements.length; i++) {
     );
 }
 
-backgroundImageData = context.getImageData(0, 0, width, height);
+backgroundImageData = c.getImageData(0, 0, width, height);
 a.style.background = 'black';
 
 var snareBuffer = null;
@@ -63,25 +62,6 @@ var snareSequence = [
     3,
     5,
     7
-];
-
-var bassSequence = [
-    [65.41, 0],
-    [73.42, 0.5],
-    [77.78, 1],
-    [87.31, 1.5],
-    [98.00, 2],
-    [103.83, 2.5],
-    [98.00, 3],
-    [87.31, 3.5],
-    [77.7, 4],
-    [73.42, 4.5],
-    [65.41, 5],
-    [65.41, 5.5],
-    [65.41, 6],
-    [65.41, 6.5],
-    [65.41, 7],
-    [65.41, 7.5]
 ];
 
 var snareBuffer = audioContext.createBuffer(1, audioContext.sampleRate, audioContext.sampleRate);
@@ -115,45 +95,23 @@ for (var i = 0; i < audioContext.sampleRate; i++) {
         var endTime = time + 0.03;
         var source = audioContext.createBufferSource();
         var gainNode = audioContext.createGain();
-        var noiseFilter = audioContext.createBiquadFilter();
 
         source.buffer = snareBuffer;
 
-        noiseFilter.type = 'highpass';
-        noiseFilter.frequency.value = 1000;
-
         gainNode.gain.value = 0.2;
 
-        source.connect(noiseFilter);
-        noiseFilter.connect(gainNode);
+        source.connect(gainNode);
         gainNode.connect(audioContext.destination);
 
         source.start(time);
         source.stop(endTime);
     });
 
-    bassSequence.forEach(function (sequenceItem) {
-        var time = audioContext.currentTime + sequenceItem[1];
-        var endTime = time + 0.5;
-        var oscillator = audioContext.createOscillator();
-        var gainNode = audioContext.createGain();
-
-        oscillator.type = 'triangle';
-        oscillator.frequency.value = sequenceItem[0];
-        gainNode.gain.setValueAtTime(0.5, time);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, endTime);
-
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        oscillator.start(time);
-        oscillator.stop(endTime);
-    });
-
     setTimeout(audioLoop, 8000);
 }());
 
 requestAnimationFrame(function loop(time) {
-    context.clearRect(0, 0, width, height);
+    c.clearRect(0, 0, width, height);
 
     // background animation
     for (var i = 0; i < 2; i++) {
@@ -163,7 +121,7 @@ requestAnimationFrame(function loop(time) {
             backgroundReps[i] = width;
         }
 
-        context.putImageData(backgroundImageData, backgroundReps[i], 0);
+        c.putImageData(backgroundImageData, backgroundReps[i], 0);
     }
 
     // Mathmagician render
@@ -180,42 +138,32 @@ requestAnimationFrame(function loop(time) {
     mathMagicianY += (3 * bounceDirection) * Math.sin(Math.PI * progress);
 
     // head
-    context.fillStyle = context.createRadialGradient(mathMagicianX, mathMagicianY, mathMagicianHeadRadius, mathMagicianX, mathMagicianY, mathMagicianHeadRadius - 15);
-    context.fillStyle.addColorStop(0, '#ffad60');
-    context.fillStyle.addColorStop(1, '#fff6e5');
+    c.fillStyle = '#fff6e5';
 
-    context.beginPath();
-    context.ellipse(mathMagicianX, mathMagicianY, mathMagicianHeadRadius, mathMagicianHeadRadius, 0, 0, Math.PI * 2);
-    context.fill();
+    c.beginPath();
+    c.ellipse(mathMagicianX, mathMagicianY, mathMagicianHeadRadius, mathMagicianHeadRadius, 0, 0, Math.PI * 2);
+    c.fill();
 
     // left eye
-    context.fillStyle = '#000';
-    context.beginPath();
-    context.ellipse(mathMagicianX - 25, mathMagicianY, 5, 15, 0, 0, Math.PI * 2);
-    context.fill();
+    c.fillStyle = '#000';
+    c.beginPath();
+    c.ellipse(mathMagicianX - 25, mathMagicianY, 5, 15, 0, 0, Math.PI * 2);
+    c.fill();
 
     // right eye
-    context.beginPath();
-    context.ellipse(mathMagicianX + 25, mathMagicianY, 5, 15, 0, 0, Math.PI * 2);
-    context.fill();
+    c.beginPath();
+    c.ellipse(mathMagicianX + 25, mathMagicianY, 5, 15, 0, 0, Math.PI * 2);
+    c.fill();
 
     // hat
-    context.fillStyle = context.createLinearGradient(
-        mathMagicianX - mathMagicianHeadRadius,
-        mathMagicianY - mathMagicianHeadRadius / 2 - 70,
-        mathMagicianHeadRadius * 2,
-        70
-    );
+    c.fillStyle = '#104E8B';
 
-    context.fillStyle.addColorStop(0, '#60AFFE');
-    context.fillStyle.addColorStop(0.5, '#104E8B');
-
-    context.beginPath();
-    context.moveTo(mathMagicianX - mathMagicianHeadRadius, mathMagicianY - mathMagicianHeadRadius / 2);
-    context.lineTo(mathMagicianX, mathMagicianY - mathMagicianHeadRadius - 70);
-    context.lineTo(mathMagicianX + mathMagicianHeadRadius, mathMagicianY - mathMagicianHeadRadius / 2);
-    context.lineTo(mathMagicianX - mathMagicianHeadRadius, mathMagicianY - mathMagicianHeadRadius / 2);
-    context.fill();
+    c.beginPath();
+    c.moveTo(mathMagicianX - mathMagicianHeadRadius, mathMagicianY - mathMagicianHeadRadius / 2);
+    c.lineTo(mathMagicianX, mathMagicianY - mathMagicianHeadRadius - 70);
+    c.lineTo(mathMagicianX + mathMagicianHeadRadius, mathMagicianY - mathMagicianHeadRadius / 2);
+    c.lineTo(mathMagicianX - mathMagicianHeadRadius, mathMagicianY - mathMagicianHeadRadius / 2);
+    c.fill();
 
     // End Mathmagician
 
@@ -232,13 +180,13 @@ requestAnimationFrame(function loop(time) {
     var scale = 1 + progress * 2;
     var opacity = 1 - progress;
 
-    context.rotate(rotation);
-    context.scale(scale, scale);
+    c.rotate(rotation);
+    c.scale(scale, scale);
 
-    context.fillStyle = 'rgba(255, 255, 255, ' + opacity + ')';
-    context.font = 'bold 26px Arial';
-    context.fillText(leftOperand + ' x ' + rightOperand + ' = ' + result, 150, 50);
-    context['resetTransform'](); // It seems Closure Compiler isn't aware of this relatively new API
+    c.fillStyle = 'rgba(255, 255, 255, ' + opacity + ')';
+    c.font = 'bold 26px Arial';
+    c.fillText(leftOperand + ' x ' + rightOperand + ' = ' + result, 150, 50);
+    c['resetTransform'](); // It seems Closure Compiler isn't aware of this relatively new API
 
     requestAnimationFrame(loop);
 });
