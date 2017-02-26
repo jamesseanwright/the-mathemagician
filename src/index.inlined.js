@@ -5,40 +5,17 @@ var context = c;
 var width = a.width;
 var height = a.height;
 
-var mathmagician;
+var mathMagicianX = width / 2;
+var mathMagicianY = 200;
+var mathMagicianHeadRadius = 45;
+var bounceDirection = 1;
+
+// var mathMagicianBounceAnimation = new BounceAnimation(this, y - 50, y + 150, 3, 1)
+
 var background;
 var music;
 
 a.style.background = 'black';
-
-function BounceAnimation(entity, startY, endY, speed) {
-    this.entity = entity;
-    this.startY = startY;
-    this.endY = endY;
-    this.speed = speed;
-    this.direction = 1;
-}
-
-BounceAnimation.UP = -1;
-BounceAnimation.DOWN = 1;
-
-BounceAnimation.prototype.updateDirection = function updateDirection() {
-    if (Math.ceil(this.entity.y) + this.entity.headRadius > this.endY && this.direction === BounceAnimation.DOWN) {
-        this.direction = BounceAnimation.UP;
-    }
-
-    if (Math.floor(this.entity.y) <= this.startY && this.direction === BounceAnimation.UP) {
-        this.direction = BounceAnimation.DOWN;
-    }
-};
-
-BounceAnimation.prototype.update = function update() {
-    var progress;
-
-    this.updateDirection();
-    progress = this.startY / (this.entity.y || 1);
-    this.entity.y += (this.speed * this.direction) * Math.sin(Math.PI * progress);
-};
 
 function SpinScaleFadeAnimation(entity) {
     this.entity = entity;
@@ -96,86 +73,6 @@ Multiplication.prototype.render = function render(time) {
     context.font = Multiplication.FONT;
     context.fillText(this.leftOperand + ' x ' + this.rightOperand + ' = ' + this.result, this.x, this.y);
     context['resetTransform'](); // It seems Closure Compiler isn't aware of this relatively new API
-};
-
-function Mathmagician(x, y) {
-    this.x = x;
-    this.y = y;
-    this.headRadius = 45;
-
-    this.leftEye = new Eye(this, 5, 15, -25, 0);
-    this.rightEye = new Eye(this, 5, 15, 25, 0);
-    this.hat = new Hat(this, 70);
-    this.bounceAnimation = new BounceAnimation(this, y - 50, y + 150, 3, BounceAnimation.DOWN);
-}
-
-Mathmagician.prototype.render = function render() {
-    context.fillStyle = this.createSkinGradient();
-    context.beginPath();
-    context.ellipse(this.x, this.y, this.headRadius, this.headRadius, 0, 0, Math.PI * 2);
-    context.fill();
-
-    this.bounceAnimation.update();
-    this.hat.render();
-    this.leftEye.render();
-    this.rightEye.render();
-};
-
-Mathmagician.prototype.createSkinGradient = function createSkinGradient() {
-    var gradient = context.createRadialGradient(this.x, this.y, this.headRadius, this.x, this.y, this.headRadius - 15);
-
-    gradient.addColorStop(0, '#ffad60');
-    gradient.addColorStop(1, '#fff6e5');
-
-    return gradient;
-};
-
-function Eye(parent, width, height, xOffset, yOffset) {
-    this.parent = parent;
-    this.width = width;
-    this.height = height;
-    this.xOffset = xOffset;
-    this.yOffset = yOffset;
-}
-
-Eye.prototype.render = function render() {
-    context.fillStyle = '#000';
-    context.beginPath();
-    context.ellipse(this.parent.x - this.xOffset, this.parent.y + this.yOffset, this.width, this.height, 0, 0, Math.PI * 2);
-    context.fill();
-};
-
-function Hat(parent, height) {
-    this.parent = parent;
-    this.x = parent.x - this.parent.headRadius;
-    this.baseWidth = this.parent.headRadius * 2;
-    this.height = height;
-
-    this.gradient = context.createLinearGradient(
-        this.x,
-        this.getBaseY() - this.height,
-        this.baseWidth,
-        this.height
-    );
-
-    this.gradient.addColorStop(0, '#60AFFE');
-    this.gradient.addColorStop(0.5, '#104E8B');
-}
-
-Hat.prototype.render = function render() {
-    var baseY = this.getBaseY();
-
-    context.fillStyle = this.gradient;
-    context.beginPath();
-    context.moveTo(this.x, baseY);
-    context.lineTo(this.x + this.baseWidth / 2, baseY - this.height);
-    context.lineTo(this.x + this.baseWidth, baseY);
-    context.lineTo(this.x, baseY);
-    context.fill();
-};
-
-Hat.prototype.getBaseY = function getBaseY() {
-    return this.parent.y - this.parent.headRadius / 2;
 };
 
 function BackgroundElement(x, y) {
@@ -288,7 +185,7 @@ music = {
         }
 
         var buffer = audioContext.createBuffer(1, audioContext.sampleRate, audioContext.sampleRate);
-	    var output = buffer.getChannelData(0);
+        var output = buffer.getChannelData(0);
 
         for (var i = 0; i < audioContext.sampleRate; i++) {
             output[i] = Math.random() * 2 - 1;
@@ -300,27 +197,27 @@ music = {
     },
 
     kick: function kick(startTime) {
-		var time = audioContext.currentTime + startTime;
+        var time = audioContext.currentTime + startTime;
         var endTime = time + 0.2;
-		var oscillator = audioContext.createOscillator();
-		var gainNode = audioContext.createGain();
+        var oscillator = audioContext.createOscillator();
+        var gainNode = audioContext.createGain();
 
-		oscillator.type = 'triangle';
-		oscillator.frequency.value = 18;
-		gainNode.gain.setValueAtTime(7, time);
-		gainNode.gain.exponentialRampToValueAtTime(0.001, endTime);
+        oscillator.type = 'triangle';
+        oscillator.frequency.value = 18;
+        gainNode.gain.setValueAtTime(7, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, endTime);
 
-		oscillator.connect(gainNode);
-		gainNode.connect(audioContext.destination);
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
         oscillator.start(time);
         oscillator.stop(endTime);
     },
 
     snare: function snare(startTime) {
-		var time = audioContext.currentTime + startTime;
+        var time = audioContext.currentTime + startTime;
         var endTime = time + 0.03;
-        var source  = audioContext.createBufferSource();
-		var gainNode = audioContext.createGain();
+        var source = audioContext.createBufferSource();
+        var gainNode = audioContext.createGain();
         var noiseFilter = audioContext.createBiquadFilter();
 
         source.buffer = this.getSnareBuffer();
@@ -341,21 +238,21 @@ music = {
     bass: function bass(sequenceItem) {
         var frequency = sequenceItem[0];
         var startTime = sequenceItem[1];
-		var time = audioContext.currentTime + startTime;
+        var time = audioContext.currentTime + startTime;
         var endTime = time + 0.5;
-		var oscillator = audioContext.createOscillator();
-		var gainNode = audioContext.createGain();
+        var oscillator = audioContext.createOscillator();
+        var gainNode = audioContext.createGain();
 
-		oscillator.type = 'triangle';
-		oscillator.frequency.value = frequency;
-		gainNode.gain.setValueAtTime(0.5, time);
-		gainNode.gain.exponentialRampToValueAtTime(0.001, endTime);
+        oscillator.type = 'triangle';
+        oscillator.frequency.value = frequency;
+        gainNode.gain.setValueAtTime(0.5, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, endTime);
 
-		oscillator.connect(gainNode);
-		gainNode.connect(audioContext.destination);
-		oscillator.start(time);
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        oscillator.start(time);
         oscillator.stop(endTime);
-	},
+    },
 
     play: function play() {
         this.kickSequence.forEach(this.kick.bind(this));
@@ -368,12 +265,64 @@ music = {
 
 music.play();
 
-mathmagician = new Mathmagician(width / 2, 200);
-
 requestAnimationFrame(function loop(time) {
+    var progress;
+
     context.clearRect(0, 0, width, height);
     background.update();
-    mathmagician.render();
+
+    // Mathmagician render
+
+    // bounce animation
+    if (Math.ceil(mathMagicianY) + mathMagicianHeadRadius > 350 && bounceDirection === 1) {
+        bounceDirection = -1;
+    }
+
+    if (Math.floor(mathMagicianY) <= 150 && bounceDirection === -1) {
+        bounceDirection = 1;
+    }
+
+    progress = 150 / (mathMagicianY || 1);
+    mathMagicianY += (3 * bounceDirection) * Math.sin(Math.PI * progress);
+
+    // head
+    context.fillStyle = context.createRadialGradient(mathMagicianX, mathMagicianY, mathMagicianHeadRadius, mathMagicianX, mathMagicianY, mathMagicianHeadRadius - 15);
+    context.fillStyle.addColorStop(0, '#ffad60');
+    context.fillStyle.addColorStop(1, '#fff6e5');
+
+    context.beginPath();
+    context.ellipse(mathMagicianX, mathMagicianY, mathMagicianHeadRadius, mathMagicianHeadRadius, 0, 0, Math.PI * 2);
+    context.fill();
+
+    // left eye
+    context.fillStyle = '#000';
+    context.beginPath();
+    context.ellipse(mathMagicianX - 25, mathMagicianY, 5, 15, 0, 0, Math.PI * 2);
+    context.fill();
+
+    // right eye
+    context.beginPath();
+    context.ellipse(mathMagicianX + 25, mathMagicianY, 5, 15, 0, 0, Math.PI * 2);
+    context.fill();
+
+    // hat
+    context.fillStyle = context.createLinearGradient(
+        mathMagicianX - mathMagicianHeadRadius,
+        mathMagicianY - mathMagicianHeadRadius / 2 - 70,
+        mathMagicianHeadRadius * 2,
+        70
+    );
+
+    context.fillStyle.addColorStop(0, '#60AFFE');
+    context.fillStyle.addColorStop(0.5, '#104E8B');
+
+    context.beginPath();
+    context.moveTo(mathMagicianX - mathMagicianHeadRadius, mathMagicianY - mathMagicianHeadRadius / 2);
+    context.lineTo(mathMagicianX, mathMagicianY - mathMagicianHeadRadius - 70);
+    context.lineTo(mathMagicianX + mathMagicianHeadRadius, mathMagicianY - mathMagicianHeadRadius / 2);
+    context.lineTo(mathMagicianX - mathMagicianHeadRadius, mathMagicianY - mathMagicianHeadRadius / 2);
+    context.fill();
+
     Multiplication.update(time);
 
     requestAnimationFrame(loop);

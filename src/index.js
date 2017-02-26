@@ -288,7 +288,7 @@ music = {
         }
 
         var buffer = audioContext.createBuffer(1, audioContext.sampleRate, audioContext.sampleRate);
-	    var output = buffer.getChannelData(0);
+        var output = buffer.getChannelData(0);
 
         for (var i = 0; i < audioContext.sampleRate; i++) {
             output[i] = Math.random() * 2 - 1;
@@ -300,27 +300,27 @@ music = {
     },
 
     kick: function kick(startTime) {
-		var time = audioContext.currentTime + startTime;
+        var time = audioContext.currentTime + startTime;
         var endTime = time + 0.2;
-		var oscillator = audioContext.createOscillator();
-		var gainNode = audioContext.createGain();
+        var oscillator = audioContext.createOscillator();
+        var gainNode = audioContext.createGain();
 
-		oscillator.type = 'triangle';
-		oscillator.frequency.value = 18;
-		gainNode.gain.setValueAtTime(7, time);
-		gainNode.gain.exponentialRampToValueAtTime(0.001, endTime);
+        oscillator.type = 'triangle';
+        oscillator.frequency.value = 18;
+        gainNode.gain.setValueAtTime(7, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, endTime);
 
-		oscillator.connect(gainNode);
-		gainNode.connect(audioContext.destination);
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
         oscillator.start(time);
         oscillator.stop(endTime);
     },
 
     snare: function snare(startTime) {
-		var time = audioContext.currentTime + startTime;
+        var time = audioContext.currentTime + startTime;
         var endTime = time + 0.03;
-        var source  = audioContext.createBufferSource();
-		var gainNode = audioContext.createGain();
+        var source = audioContext.createBufferSource();
+        var gainNode = audioContext.createGain();
         var noiseFilter = audioContext.createBiquadFilter();
 
         source.buffer = this.getSnareBuffer();
@@ -341,21 +341,21 @@ music = {
     bass: function bass(sequenceItem) {
         var frequency = sequenceItem[0];
         var startTime = sequenceItem[1];
-		var time = audioContext.currentTime + startTime;
+        var time = audioContext.currentTime + startTime;
         var endTime = time + 0.5;
-		var oscillator = audioContext.createOscillator();
-		var gainNode = audioContext.createGain();
+        var oscillator = audioContext.createOscillator();
+        var gainNode = audioContext.createGain();
 
-		oscillator.type = 'triangle';
-		oscillator.frequency.value = frequency;
-		gainNode.gain.setValueAtTime(0.5, time);
-		gainNode.gain.exponentialRampToValueAtTime(0.001, endTime);
+        oscillator.type = 'triangle';
+        oscillator.frequency.value = frequency;
+        gainNode.gain.setValueAtTime(0.5, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, endTime);
 
-		oscillator.connect(gainNode);
-		gainNode.connect(audioContext.destination);
-		oscillator.start(time);
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        oscillator.start(time);
         oscillator.stop(endTime);
-	},
+    },
 
     play: function play() {
         this.kickSequence.forEach(this.kick.bind(this));
