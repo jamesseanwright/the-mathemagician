@@ -10,70 +10,15 @@ var mathMagicianY = 200;
 var mathMagicianHeadRadius = 45;
 var bounceDirection = 1;
 
-// var mathMagicianBounceAnimation = new BounceAnimation(this, y - 50, y + 150, 3, 1)
+var leftOperand = Math.round(Math.random() * 50000);
+var rightOperand = Math.round(Math.random() * 50000);
+var result = leftOperand * rightOperand;
+var lastMultiplicationGenTime;
 
 var background;
 var music;
 
 a.style.background = 'black';
-
-function SpinScaleFadeAnimation(entity) {
-    this.entity = entity;
-    this.entity.opacity = 1;
-}
-
-SpinScaleFadeAnimation.DURATION_MS = 4000;
-
-SpinScaleFadeAnimation.prototype.update = function update(time) {
-    var progress = time / SpinScaleFadeAnimation.DURATION_MS;
-    var rotation = Math.PI * 0.5 - progress;
-    var scale = 1 + progress;
-
-    this.entity.opacity = 1 - progress;
-
-    context.rotate(rotation);
-    context.scale(scale, scale);
-};
-
-function Multiplication(x, y) {
-    this.x = x;
-    this.y = y;
-
-    this.leftOperand = Multiplication.getOperand();
-    this.rightOperand = Multiplication.getOperand();
-    this.result = this.leftOperand * this.rightOperand;
-
-    this.animation = new SpinScaleFadeAnimation(this);
-}
-
-Multiplication.MAX_OPERAND = 50000;
-Multiplication.GENERATION_FREQUENCY_MS = 5000;
-Multiplication.FONT = 'bold 26px Arial';
-
-Multiplication.lastGenTime = null;
-
-Multiplication.getOperand = function getOperand() {
-    return Math.round(Math.random() * Multiplication.MAX_OPERAND);
-};
-
-Multiplication.update = function update(time) {
-    var shouldGenerate = !Multiplication.lastGenTime || Multiplication.lastGenTime < time - Multiplication.GENERATION_FREQUENCY_MS;
-
-    if (shouldGenerate) {
-        Multiplication.instance = new Multiplication(150, 50);
-        Multiplication.lastGenTime = time;
-    }
-
-    Multiplication.instance.render(time - Multiplication.lastGenTime);
-};
-
-Multiplication.prototype.render = function render(time) {
-    this.animation.update(time);
-    context.fillStyle = 'rgba(255, 255, 255, ' + this.opacity + ')';
-    context.font = Multiplication.FONT;
-    context.fillText(this.leftOperand + ' x ' + this.rightOperand + ' = ' + this.result, this.x, this.y);
-    context['resetTransform'](); // It seems Closure Compiler isn't aware of this relatively new API
-};
 
 function BackgroundElement(x, y) {
     this.x = x;
@@ -323,7 +268,28 @@ requestAnimationFrame(function loop(time) {
     context.lineTo(mathMagicianX - mathMagicianHeadRadius, mathMagicianY - mathMagicianHeadRadius / 2);
     context.fill();
 
-    Multiplication.update(time);
+    // End Mathmagician
+
+    // multiplication render
+    if (!lastMultiplicationGenTime || time - lastMultiplicationGenTime > 4000) {
+        lastMultiplicationGenTime = time;
+        leftOperand = Math.round(Math.random() * 50000);
+        rightOperand = Math.round(Math.random() * 50000);
+        result = leftOperand * rightOperand;
+    }
+
+    progress = (time - lastMultiplicationGenTime) / 4000;
+    var rotation = Math.PI * 0.5 - progress;
+    var scale = 1 + progress;
+    var opacity = 1 - progress;
+
+    context.rotate(rotation);
+    context.scale(scale, scale);
+
+    context.fillStyle = 'rgba(255, 255, 255, ' + opacity + ')';
+    context.font = 'bold 26px Arial';
+    context.fillText(leftOperand + ' x ' + rightOperand + ' = ' + result, 150, 50);
+    context['resetTransform'](); // It seems Closure Compiler isn't aware of this relatively new API
 
     requestAnimationFrame(loop);
 });
