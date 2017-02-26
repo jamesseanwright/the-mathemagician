@@ -6,7 +6,10 @@ var lastMultiplicationGenTime = null;
 
 var bgX = 0;
 
-// create background elements
+// create background
+c.fillStyle = '#000';
+c.fillRect(0, 0, 1024, 720);
+
 for (var x = 0; x + 35 < 1024; x += 35) {
     for (var y = 0; y < 720; y += 35) {
         c.fillStyle = 'rgba(' + [
@@ -21,7 +24,6 @@ for (var x = 0; x + 35 < 1024; x += 35) {
 }
 
 bgImageData = c.getImageData(0, 0, 1024, 720);
-a.style.background = '#000';
 
 with (new AudioContext()) {
     var snareBuffer = createBuffer(1, sampleRate, sampleRate);
@@ -67,8 +69,6 @@ with (new AudioContext()) {
 }
 
 requestAnimationFrame(function loop(time) {
-    c.clearRect(0, 0, 1024, 720);
-
     // bg animation
     bgX -= 0.5;
     c.putImageData(bgImageData, bgX, 0);
