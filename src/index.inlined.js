@@ -68,6 +68,9 @@ with (new AudioContext()) {
     }());
 }
 
+// for multiplication
+c.font = 'bold ' + c.font;
+
 requestAnimationFrame(function loop(time) {
     // bg animation
     bgX -= 0.5;
@@ -138,7 +141,6 @@ requestAnimationFrame(function loop(time) {
     c.scale(scale, scale);
 
     c.fillStyle = 'rgba(255, 255, 255, ' + opacity + ')';
-    c.font = 'bold 25px Arial';
     c.fillText(leftOperand + ' x ' + rightOperand + ' = ' + result, 150, 50);
     c['resetTransform'](); // It seems Closure Compiler isn't aware of this relatively new API
 
