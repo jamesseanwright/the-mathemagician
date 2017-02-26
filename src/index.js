@@ -106,7 +106,7 @@ function Mathmagician(x, y) {
     this.leftEye = new Eye(this, 5, 15, -25, 0);
     this.rightEye = new Eye(this, 5, 15, 25, 0);
     this.hat = new Hat(this, 70);
-    this.bounceAnimation = new BounceAnimation(this, height / 4, height / 2, 3, BounceAnimation.DOWN);
+    this.bounceAnimation = new BounceAnimation(this, y - 50, y + 150, 3, BounceAnimation.DOWN);
 }
 
 Mathmagician.prototype.render = function render() {
@@ -125,7 +125,7 @@ Mathmagician.prototype.createSkinGradient = function createSkinGradient() {
     var gradient = context.createRadialGradient(this.x, this.y, this.headRadius, this.x, this.y, this.headRadius - 15);
 
     gradient.addColorStop(0, '#ffad60');
-    gradient.addColorStop(1, '#ffe0bd');
+    gradient.addColorStop(1, '#fff6e5');
 
     return gradient;
 };
