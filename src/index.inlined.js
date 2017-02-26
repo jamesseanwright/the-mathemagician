@@ -12,13 +12,13 @@ var rightOperand = Math.round(Math.random() * 50000);
 var result = leftOperand * rightOperand;
 var lastMultiplicationGenTime = null;
 
-var backgroundElements = [];
-var backgroundReps = [0, width];
+var bgElements = [];
+var bgReps = [0, width];
 
 // create background elements
 for (var x = 0; x + 35 < width; x += 35) {
     for (var y = 0; y < height; y += 35) {
-        backgroundElements.push({
+        bgElements.push({
             x: x,
             y: y,
             number: Math.round(Math.random() * 9),
@@ -33,36 +33,20 @@ for (var x = 0; x + 35 < width; x += 35) {
 }
 
 // render background
-for (var i = 0; i < backgroundElements.length; i++) {
-    c.fillStyle = backgroundElements[i].fill;
+for (var i = 0; i < bgElements.length; i++) {
+    c.fillStyle = bgElements[i].fill;
     c.font = '25px monospace';
 
     c.fillText(
-        backgroundElements[i].number,
-        backgroundElements[i].x,
-        backgroundElements[i].y,
+        bgElements[i].number,
+        bgElements[i].x,
+        bgElements[i].y,
         25
     );
 }
 
-backgroundImageData = c.getImageData(0, 0, width, height);
-a.style.background = 'black';
-
-var snareBuffer = null;
-
-var kickSequence = [
-    0,
-    2,
-    4,
-    6
-];
-
-var snareSequence = [
-    1,
-    3,
-    5,
-    7
-];
+bgImageData = c.getImageData(0, 0, width, height);
+a.style.background = '#000';
 
 var snareBuffer = audioContext.createBuffer(1, audioContext.sampleRate, audioContext.sampleRate);
 var snareBufferOutput = snareBuffer.getChannelData(0);
@@ -73,55 +57,51 @@ for (var i = 0; i < audioContext.sampleRate; i++) {
 
 // enqueue, play, and loop freqs
 (function audioLoop() {
-    kickSequence.forEach(function (startTime) {
-        var time = audioContext.currentTime + startTime;
-        var endTime = time + 0.2;
-        var oscillator = audioContext.createOscillator();
-        var gainNode = audioContext.createGain();
+    var time = audioContext.currentTime;
+    var endTime = time + 0.2;
+    var oscillator = audioContext.createOscillator();
+    var kickGain = audioContext.createGain();
 
-        oscillator.type = 'triangle';
-        oscillator.frequency.value = 18;
-        gainNode.gain.setValueAtTime(7, time);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, endTime);
+    oscillator.type = 'triangle';
+    oscillator.frequency.value = 18;
+    kickGain.gain.setValueAtTime(7, time);
+    kickGain.gain.exponentialRampToValueAtTime(0.001, endTime);
 
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        oscillator.start(time);
-        oscillator.stop(endTime);
-    });
+    oscillator.connect(kickGain);
+    kickGain.connect(audioContext.destination);
+    oscillator.start(time);
+    oscillator.stop(endTime);
 
-    snareSequence.forEach(function (startTime) {
-        var time = audioContext.currentTime + startTime;
-        var endTime = time + 0.03;
-        var source = audioContext.createBufferSource();
-        var gainNode = audioContext.createGain();
+    time += 1;
+    endTime = time + 0.03;
+    var snareSource = audioContext.createBufferSource();
+    var snareGain = audioContext.createGain();
 
-        source.buffer = snareBuffer;
+    snareSource.buffer = snareBuffer;
 
-        gainNode.gain.value = 0.2;
+    snareGain.gain.value = 0.2;
 
-        source.connect(gainNode);
-        gainNode.connect(audioContext.destination);
+    snareSource.connect(snareGain);
+    snareGain.connect(audioContext.destination);
 
-        source.start(time);
-        source.stop(endTime);
-    });
+    snareSource.start(time);
+    snareSource.stop(endTime);
 
-    setTimeout(audioLoop, 8000);
+    setTimeout(audioLoop, 2000);
 }());
 
 requestAnimationFrame(function loop(time) {
     c.clearRect(0, 0, width, height);
 
-    // background animation
+    // bg animation
     for (var i = 0; i < 2; i++) {
-        backgroundReps[i] -= 0.5;
+        bgReps[i] -= 0.5;
 
-        if (backgroundReps[i] + width < 0) {
-            backgroundReps[i] = width;
+        if (bgReps[i] + width < 0) {
+            bgReps[i] = width;
         }
 
-        c.putImageData(backgroundImageData, backgroundReps[i], 0);
+        c.putImageData(bgImageData, bgReps[i], 0);
     }
 
     // Mathmagician render
