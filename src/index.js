@@ -1,7 +1,6 @@
 'use strict';
 
-var MIN_GUESS = 1;
-var MAX_GUESS = 100;
+var MAX_NUMBER = 100000;
 
 var audioContext = new AudioContext();
 var context = c;
@@ -11,13 +10,6 @@ var height = a.height;
 var marvin = new Marvin(width / 2, 200);
 var background;
 var music;
-
-var min = MIN_GUESS;
-var max = MAX_GUESS;
-var guessesCount = Math.ceil(Math.log2(max - min)) + 1;
-var guess;
-var isHigher;
-var isGuessCorrect;
 
 a.style.background = 'black';
 
@@ -133,6 +125,8 @@ Hat.prototype.getBaseY = function getBaseY() {
 function BackgroundElement(x, y) {
     this.x = x;
     this.y = y;
+    this.number = Math.round(Math.random() * 9);
+
     this.fill = 'rgba(' + [
         BackgroundElement.getRandomByte(),
         BackgroundElement.getRandomByte(),
@@ -149,7 +143,8 @@ BackgroundElement.getRandomByte = function getRandomByte() {
 
 BackgroundElement.prototype.render = function render() {
     context.fillStyle = this.fill;
-    context.fillRect(this.x, this.y, BackgroundElement.SIZE, BackgroundElement.SIZE);
+    context.font = BackgroundElement.SIZE + 'px monospace';
+    context.fillText(this.number, this.x, this.y, BackgroundElement.SIZE);
 };
 
 background = {
