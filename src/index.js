@@ -45,11 +45,11 @@ function SpinScaleFadeAnimation(entity) {
     this.entity.opacity = 1;
 }
 
-SpinScaleFadeAnimation.DURATION_MS = 3000;
+SpinScaleFadeAnimation.DURATION_MS = 4000;
 
 SpinScaleFadeAnimation.prototype.update = function update(time) {
     var progress = time / SpinScaleFadeAnimation.DURATION_MS;
-    var rotation = Math.PI * 0.2 - progress;
+    var rotation = Math.PI * 0.5 - progress;
     var scale = 1 + progress;
 
     this.entity.opacity = 1 - progress;
@@ -70,21 +70,20 @@ function Multiplication(x, y) {
 }
 
 Multiplication.MAX_OPERAND = 50000;
-Multiplication.GENERATION_FREQUENCY_MS = 4000;
+Multiplication.GENERATION_FREQUENCY_MS = 5000;
 Multiplication.FONT = 'bold 26px Arial';
 
-Multiplication.lastGenTime = Multiplication.GENERATION_FREQUENCY_MS;
-Multiplication.instance = new Multiplication(250, 100);
+Multiplication.lastGenTime = null;
 
 Multiplication.getOperand = function getOperand() {
     return Math.round(Math.random() * Multiplication.MAX_OPERAND);
 };
 
 Multiplication.update = function update(time) {
-    var shouldGenerate = Multiplication.lastGenTime < time - Multiplication.GENERATION_FREQUENCY_MS;
+    var shouldGenerate = !Multiplication.lastGenTime || Multiplication.lastGenTime < time - Multiplication.GENERATION_FREQUENCY_MS;
 
     if (shouldGenerate) {
-        Multiplication.instance = new Multiplication(250, 100);
+        Multiplication.instance = new Multiplication(150, 50);
         Multiplication.lastGenTime = time;
     }
 
