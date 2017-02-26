@@ -84,7 +84,7 @@ requestAnimationFrame(function loop(time) {
         bounceDirection = -1;
     }
 
-    if (Math.round(mathMagicianY) <= 150 && bounceDirection === -1) {
+    if (mathMagicianY < 150 && bounceDirection === -1) {
         bounceDirection = 1;
     }
 
