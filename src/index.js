@@ -50,7 +50,7 @@ SpinScaleFadeAnimation.DURATION_MS = 4000;
 SpinScaleFadeAnimation.prototype.update = function update(time) {
     var progress = time / SpinScaleFadeAnimation.DURATION_MS;
     var rotation = Math.PI * 0.5 - progress;
-    var scale = 1 + progress;
+    var scale = 1 + progress * 2;
 
     this.entity.opacity = 1 - progress;
 
