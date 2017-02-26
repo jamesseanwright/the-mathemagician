@@ -2,7 +2,7 @@ var mathMagicianX = 512;
 var mathMagicianY = 200;
 var bounceDirection = 1;
 
-var lastMultiplicationGenTime = null;
+var lastMultiplicationGenTime = 0;
 
 var bgX = 0;
 
@@ -26,9 +26,9 @@ for (var x = 0; x + 35 < 1024; x += 35) {
 bgImageData = c.getImageData(0, 0, 1024, 720);
 
 with (new AudioContext()) {
-    var snareBuffer = createBuffer(1, sampleRate, sampleRate);
+    var snareBuffer = createBuffer(1, 44100, 44100);
 
-    for (var i = 0; i < sampleRate; i++) {
+    for (var i = 0; i < 44100; i++) {
         snareBuffer.getChannelData(0)[i] = Math.random() * 2 - 1;
     }
 
