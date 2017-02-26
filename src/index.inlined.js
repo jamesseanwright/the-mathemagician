@@ -1,8 +1,6 @@
 var audioContext = new AudioContext();
-var width = a.width;
-var height = a.height;
 
-var mathMagicianX = width / 2;
+var mathMagicianX = a.width / 2;
 var mathMagicianY = 200;
 var mathMagicianHeadRadius = 45;
 var bounceDirection = 1;
@@ -13,11 +11,11 @@ var result = leftOperand * rightOperand;
 var lastMultiplicationGenTime = null;
 
 var bgElements = [];
-var bgReps = [0, width];
+var bgReps = [0, a.width];
 
 // create background elements
-for (var x = 0; x + 35 < width; x += 35) {
-    for (var y = 0; y < height; y += 35) {
+for (var x = 0; x + 35 < a.width; x += 35) {
+    for (var y = 0; y < a.height; y += 35) {
         bgElements.push({
             x: x,
             y: y,
@@ -45,7 +43,7 @@ for (var i = 0; i < bgElements.length; i++) {
     );
 }
 
-bgImageData = c.getImageData(0, 0, width, height);
+bgImageData = c.getImageData(0, 0, a.width, a.height);
 a.style.background = '#000';
 
 var snareBuffer = audioContext.createBuffer(1, audioContext.sampleRate, audioContext.sampleRate);
@@ -91,14 +89,14 @@ for (var i = 0; i < audioContext.sampleRate; i++) {
 }());
 
 requestAnimationFrame(function loop(time) {
-    c.clearRect(0, 0, width, height);
+    c.clearRect(0, 0, a.width, a.height);
 
     // bg animation
     for (var i = 0; i < 2; i++) {
         bgReps[i] -= 0.5;
 
-        if (bgReps[i] + width < 0) {
-            bgReps[i] = width;
+        if (bgReps[i] + a.width < 0) {
+            bgReps[i] = a.width;
         }
 
         c.putImageData(bgImageData, bgReps[i], 0);
@@ -106,11 +104,11 @@ requestAnimationFrame(function loop(time) {
 
     // Mathmagician render
     // bounce animation
-    if (Math.ceil(mathMagicianY) + mathMagicianHeadRadius > 350 && bounceDirection === 1) {
+    if (mathMagicianY + mathMagicianHeadRadius > 350 && bounceDirection === 1) {
         bounceDirection = -1;
     }
 
-    if (Math.floor(mathMagicianY) <= 150 && bounceDirection === -1) {
+    if (Math.round(mathMagicianY) <= 150 && bounceDirection === -1) {
         bounceDirection = 1;
     }
 
@@ -156,7 +154,7 @@ requestAnimationFrame(function loop(time) {
     }
 
     progress = (time - lastMultiplicationGenTime) / 4000;
-    var rotation = Math.PI * 0.5 - progress;
+    var rotation = Math.PI * 0.5 - progress * 2;
     var scale = 1 + progress * 2;
     var opacity = 1 - progress;
 
