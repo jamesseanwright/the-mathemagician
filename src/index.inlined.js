@@ -10,7 +10,7 @@ var rightOperand = Math.round(Math.random() * 50000);
 var result = leftOperand * rightOperand;
 var lastMultiplicationGenTime = null;
 
-var bgReps = [0, a.width];
+var bgX = 0;
 
 // create background elements
 for (var x = 0; x + 35 < a.width; x += 35) {
@@ -75,14 +75,12 @@ requestAnimationFrame(function loop(time) {
     c.clearRect(0, 0, a.width, a.height);
 
     // bg animation
-    for (var i = 0; i < 2; i++) {
-        bgReps[i] -= 0.5;
+    bgX -= 0.5;
+    c.putImageData(bgImageData, bgX, 0);
+    c.putImageData(bgImageData, bgX + a.width, 0);
 
-        if (bgReps[i] + a.width < 0) {
-            bgReps[i] = a.width;
-        }
-
-        c.putImageData(bgImageData, bgReps[i], 0);
+    if (bgX + a.width < 0) {
+        bgX = 0;
     }
 
     // Mathmagician render
