@@ -92,7 +92,7 @@ requestAnimationFrame(function loop(time) {
     mathMagicianY += (3 * bounceDirection) * Math.sin(3.14 * progress);
 
     // head
-    c.fillStyle = '#fff6e5';
+    c.fillStyle = '#ffd';
 
     c.beginPath();
     c.ellipse(mathMagicianX, mathMagicianY, 45, 45, 0, 0, 6.2832);
@@ -110,7 +110,7 @@ requestAnimationFrame(function loop(time) {
     c.fill();
 
     // hat
-    c.fillStyle = '#104E8B';
+    c.fillStyle = '#10b';
 
     c.beginPath();
     c.moveTo(mathMagicianX - 45, mathMagicianY - 45 / 2);
