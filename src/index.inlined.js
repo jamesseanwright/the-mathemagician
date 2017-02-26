@@ -10,37 +10,20 @@ var rightOperand = Math.round(Math.random() * 50000);
 var result = leftOperand * rightOperand;
 var lastMultiplicationGenTime = null;
 
-var bgElements = [];
 var bgReps = [0, a.width];
 
 // create background elements
 for (var x = 0; x + 35 < a.width; x += 35) {
     for (var y = 0; y < a.height; y += 35) {
-        bgElements.push({
-            x: x,
-            y: y,
-            number: Math.round(Math.random() * 9),
+        c.fillStyle = 'rgba(' + [
+            Math.ceil(Math.random() * 255),
+            Math.ceil(Math.random() * 255),
+            Math.ceil(Math.random() * 255),
+        ].join(',') + ',0.5)'
 
-            fill: 'rgba(' + [
-                Math.ceil(Math.random() * 255),
-                Math.ceil(Math.random() * 255),
-                Math.ceil(Math.random() * 255),
-            ].join(',') + ',0.5)'
-        });
+        c.font = '25px monospace';
+        c.fillText(Math.round(Math.random() * 9), x, y, 25);
     }
-}
-
-// render background
-for (var i = 0; i < bgElements.length; i++) {
-    c.fillStyle = bgElements[i].fill;
-    c.font = '25px monospace';
-
-    c.fillText(
-        bgElements[i].number,
-        bgElements[i].x,
-        bgElements[i].y,
-        25
-    );
 }
 
 bgImageData = c.getImageData(0, 0, a.width, a.height);
