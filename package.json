@@ -1,7 +1,7 @@
 {
-  "name": "marvin-the-magician",
-  "version": "0.0.1",
-  "description": "My JS1k 2017 entry. A binary search number guessing game using Canvas and Web Audio",
+  "name": "the-mathemagician",
+  "version": "1.0.0",
+  "description": "My JS1k 2017 entry. A little Canvas and Web Audio piece",
   "main": "index.js",
   "scripts": {
     "build": "./tasks/build.bash",

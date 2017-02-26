@@ -5,7 +5,7 @@ var context = c;
 var width = a.width;
 var height = a.height;
 
-var mathmagician;
+var mathemagician;
 var background;
 var music;
 
@@ -98,7 +98,7 @@ Multiplication.prototype.render = function render(time) {
     context['resetTransform'](); // It seems Closure Compiler isn't aware of this relatively new API
 };
 
-function Mathmagician(x, y) {
+function Mathemagician(x, y) {
     this.x = x;
     this.y = y;
     this.headRadius = 45;
@@ -109,7 +109,7 @@ function Mathmagician(x, y) {
     this.bounceAnimation = new BounceAnimation(this, y - 50, y + 150, 3, BounceAnimation.DOWN);
 }
 
-Mathmagician.prototype.render = function render() {
+Mathemagician.prototype.render = function render() {
     context.fillStyle = this.createSkinGradient();
     context.beginPath();
     context.ellipse(this.x, this.y, this.headRadius, this.headRadius, 0, 0, Math.PI * 2);
@@ -121,7 +121,7 @@ Mathmagician.prototype.render = function render() {
     this.rightEye.render();
 };
 
-Mathmagician.prototype.createSkinGradient = function createSkinGradient() {
+Mathemagician.prototype.createSkinGradient = function createSkinGradient() {
     var gradient = context.createRadialGradient(this.x, this.y, this.headRadius, this.x, this.y, this.headRadius - 15);
 
     gradient.addColorStop(0, '#ffad60');
@@ -368,12 +368,12 @@ music = {
 
 music.play();
 
-mathmagician = new Mathmagician(width / 2, 200);
+mathemagician = new Mathemagician(width / 2, 200);
 
 requestAnimationFrame(function loop(time) {
     context.clearRect(0, 0, width, height);
     background.update();
-    mathmagician.render();
+    mathemagician.render();
     Multiplication.update(time);
 
     requestAnimationFrame(loop);

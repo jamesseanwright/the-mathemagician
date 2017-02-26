@@ -1,5 +1,5 @@
 var mathMagicianX = 512;
-var mathMagicianY = 200;
+var mathemagicianY = 200;
 var bounceDirection = 1;
 
 var lastMultiplicationGenTime = 0;
@@ -65,7 +65,7 @@ with (new AudioContext()) {
         snareSource.stop(endTime);
 
         setTimeout(audioLoop, 2000);
-    }());
+    } ());
 }
 
 // for multiplication
@@ -83,43 +83,43 @@ requestAnimationFrame(function loop(time) {
 
     // Mathmagician render
     // bounce animation
-    if (mathMagicianY + 45 > 350 && bounceDirection === 1) {
+    if (mathemagicianY + 45 > 350 && bounceDirection === 1) {
         bounceDirection = -1;
     }
 
-    if (mathMagicianY < 150 && bounceDirection === -1) {
+    if (mathemagicianY < 150 && bounceDirection === -1) {
         bounceDirection = 1;
     }
 
-    var progress = 150 / (mathMagicianY || 1);
-    mathMagicianY += (3 * bounceDirection) * Math.sin(3.14 * progress);
+    var progress = 150 / (mathemagicianY || 1);
+    mathemagicianY += (3 * bounceDirection) * Math.sin(3.14 * progress);
 
     // head
     c.fillStyle = '#ffd';
 
     c.beginPath();
-    c.ellipse(mathMagicianX, mathMagicianY, 45, 45, 0, 0, 6.2832);
+    c.ellipse(mathMagicianX, mathemagicianY, 45, 45, 0, 0, 6.2832);
     c.fill();
 
     // left eye
     c.fillStyle = '#000';
     c.beginPath();
-    c.ellipse(mathMagicianX - 25, mathMagicianY, 5, 15, 0, 0, 6.2832);
+    c.ellipse(mathMagicianX - 25, mathemagicianY, 5, 15, 0, 0, 6.2832);
     c.fill();
 
     // right eye
     c.beginPath();
-    c.ellipse(mathMagicianX + 25, mathMagicianY, 5, 15, 0, 0, 6.2832);
+    c.ellipse(mathMagicianX + 25, mathemagicianY, 5, 15, 0, 0, 6.2832);
     c.fill();
 
     // hat
     c.fillStyle = '#10b';
 
     c.beginPath();
-    c.moveTo(mathMagicianX - 45, mathMagicianY - 45 / 2);
-    c.lineTo(mathMagicianX, mathMagicianY - 45 - 70);
-    c.lineTo(mathMagicianX + 45, mathMagicianY - 45 / 2);
-    c.lineTo(mathMagicianX - 45, mathMagicianY - 45 / 2);
+    c.moveTo(mathMagicianX - 45, mathemagicianY - 45 / 2);
+    c.lineTo(mathMagicianX, mathemagicianY - 45 - 70);
+    c.lineTo(mathMagicianX + 45, mathemagicianY - 45 / 2);
+    c.lineTo(mathMagicianX - 45, mathemagicianY - 45 / 2);
     c.fill();
 
     // End Mathmagician
