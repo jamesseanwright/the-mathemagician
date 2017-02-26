@@ -69,7 +69,7 @@ with (new AudioContext()) {
 }
 
 // for multiplication
-c.font = 'bold ' + c.font;
+c.font = '700 ' + c.font;
 
 requestAnimationFrame(function loop(time) {
     // bg animation
