@@ -4,6 +4,20 @@ My [JS1k 2017 entry](http://js1k.com/2017-magic/). A little Canvas and Web Audio
 
 [View online](http://js1k.com/2017-magic/demo/2837)
 
+
+## Supported Browsers
+
+* Chrome
+* Firefox
+
+I haven't tested it outside of these two browsers, but it _should_ work in Edge and maybe Safari.
+
+
+## Minimum Resolution
+
+Due to the background's scrolling logic, you'll require a minimum viewport width of 1024 pixels. Unfortunately, I wasn't able to fix this without surpassing the 1024-byte limit.
+
+
 ## Build Script
 
 I attempted to automate the build process, from initial minification with Closure Compiler to crushing with RegPack. However, I was unable to get this to work, plus I reached the stage at which it was easier to work with the minified code directly.
