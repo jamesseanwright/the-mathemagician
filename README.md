@@ -2,6 +2,7 @@
 
 My [JS1k 2017 entry](http://js1k.com/2017-magic/). A little Canvas and Web Audio piece
 
+[View online](http://js1k.com/2017-magic/demo/2837)
 
 ## Build Script
 
